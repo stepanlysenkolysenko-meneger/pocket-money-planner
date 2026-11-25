@@ -1,0 +1,140 @@
+.hero {
+  isolation: isolate;
+}
+
+.pig-walker {
+  position: absolute;
+  z-index: 2;
+  bottom: 3px;
+  left: -145px;
+  width: 118px;
+  height: 80px;
+  pointer-events: none;
+  filter: drop-shadow(0 7px 7px rgba(49, 25, 101, .2));
+  animation: pig-travel 16s linear infinite;
+}
+
+.pig-walk-sprite {
+  width: 100%;
+  height: 100%;
+  background: url("../assets/images/pig-walk.png") 0 50% / 800% auto no-repeat;
+  animation: pig-steps .72s steps(7) infinite;
+}
+
+.balance {
+  position: relative;
+  overflow: hidden;
+  padding-right: 104px;
+}
+
+.deposit-pig {
+  position: absolute;
+  right: 8px;
+  bottom: 5px;
+  width: 92px;
+  height: 68px;
+  background-image: url("../assets/images/pig-deposit.png");
+  background-repeat: no-repeat;
+  background-size: 400% 300%;
+  background-position: 0 0;
+  opacity: .22;
+  transform: translateY(7px) scale(.9);
+  transition: opacity .25s, transform .25s;
+  pointer-events: none;
+}
+
+.deposit-pig.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: drop-shadow(0 7px 8px rgba(238, 172, 28, .25));
+}
+
+.expense-pig {
+  position: absolute;
+  right: 4px;
+  bottom: 1px;
+  width: 92px;
+  height: 68px;
+  background: url("../assets/images/pig-expense.png") 0 50% / 800% auto no-repeat;
+  opacity: 0;
+  transform: translateY(7px) scale(.9);
+  transition: opacity .2s, transform .2s;
+  pointer-events: none;
+}
+
+.expense-pig.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: drop-shadow(0 7px 8px rgba(211, 145, 21, .25));
+}
+
+.balance.money-arrived {
+  animation: balance-glow 1.4s ease;
+}
+
+.balance.money-spent {
+  animation: expense-glow 1.25s ease;
+}
+
+@keyframes expense-glow {
+  30% { box-shadow: 0 18px 42px rgba(236, 91, 111, .25), inset 0 0 0 2px rgba(236, 91, 111, .22); }
+}
+
+.balance.money-arrived #balance {
+  animation: balance-pop .75s ease 2;
+}
+
+.coin-sparkles {
+  position: absolute;
+  right: 52px;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: -20px 8px 0 #ffc94d, 14px 10px 0 #ffe18d, -8px 30px 0 #f1ae20, 24px 34px 0 #ffc94d;
+}
+
+.money-arrived .coin-sparkles {
+  animation: sparkle-burst 1.2s ease-out .75s;
+}
+
+@keyframes pig-steps {
+  from { background-position-x: 0%; }
+  to { background-position-x: 100%; }
+}
+
+@keyframes pig-travel {
+  0% { left: -145px; transform: scaleX(1); }
+  46% { left: calc(100% - 125px); transform: scaleX(1); }
+  50% { left: calc(100% - 125px); transform: scaleX(-1); }
+  96% { left: -145px; transform: scaleX(-1); }
+  100% { left: -145px; transform: scaleX(1); }
+}
+
+@keyframes balance-glow {
+  0%, 100% { box-shadow: var(--shadow); }
+  35% { box-shadow: 0 0 0 4px #ffc94d55, 0 18px 42px #ffc94d33; }
+}
+
+@keyframes balance-pop {
+  50% { color: var(--green); transform: scale(1.08); }
+}
+
+@keyframes sparkle-burst {
+  0% { opacity: 0; transform: scale(.2) rotate(0); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.8) rotate(35deg); }
+}
+
+@media (max-width: 560px) {
+  .pig-walker { width: 96px; height: 65px; }
+  .expense-pig { width: 84px; height: 62px; }
+  .deposit-pig { width: 84px; height: 62px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pig-walker { display: none; }
+  .pig-walk-sprite, .deposit-pig, .expense-pig, .money-arrived, .money-spent, .money-arrived #balance, .money-arrived .coin-sparkles { animation: none !important; }
+}

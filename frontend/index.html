@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7557ed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/app-icon.png">
+  <title>Pocket Money — планувальник грошей</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/progress.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/pig.css">
+  <link rel="stylesheet" href="css/smart.css">
+  <link rel="stylesheet" href="css/banks.css">
+  <link rel="stylesheet" href="css/bank-connect.css">
+  <link rel="stylesheet" href="css/workspace.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <script src="js/chart.umd.min.js" defer></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <section id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">₴</div>
+      <p class="eyebrow">Особистий фінансовий простір</p>
+      <h1 id="auth-title">Вхід у Pocket Money</h1>
+      <p id="auth-copy" class="login-copy">Увійди у свій локальний профіль.</p>
+      <div class="auth-tabs">
+        <button id="show-login" class="active" type="button">Увійти</button>
+        <button id="show-register" type="button">Реєстрація</button>
+      </div>
+      <form id="login-form" novalidate>
+        <label>Твоє ім’я<input id="login-name" type="text" maxlength="40" autocomplete="username" placeholder="Наприклад, Марко" required></label>
+        <label>PIN-код<input id="login-pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="current-password" placeholder="4 цифри" required></label>
+        <label id="confirm-pin-label" class="hidden">Повтори PIN-код<input id="confirm-pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" placeholder="Ще раз 4 цифри"></label>
+        <p id="login-error" class="form-error"></p>
+        <button id="auth-submit" class="primary-btn login-btn" type="submit">Увійти</button>
+      </form>
+      <small>Профіль і фінансові дані зберігаються лише на цьому комп’ютері.</small>
+    </div>
+  </section>
+  <div id="loader" class="loader hidden"><span></span></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <header class="header">
+    <div class="shell header-inner">
+      <a class="brand" href="#top" aria-label="Pocket Money — на початок"><span class="brand-icon">₴</span><span><b>Pocket Money</b><small>Керуй своїми грошима розумно</small></span></a>
+      <nav class="desktop-nav" aria-label="Основна навігація"><a href="#operations">Операції</a><a href="#goals">Цілі</a><a href="#statistics">Статистика</a></nav>
+      <div id="scope-switch" class="scope-switch" aria-label="Фінансовий простір"><button data-scope="personal" type="button">🏠 Побут</button><button data-scope="business" type="button">💼 Бізнес</button></div>
+      <select id="language-select" class="header-select" aria-label="Мова"><option value="uk">Українська</option><option value="English">English</option><option value="Polski">Polski</option><option value="Deutsch">Deutsch</option><option value="Français">Français</option><option value="Español">Español</option><option value="Italiano">Italiano</option><option value="Português">Português</option><option value="日本語">日本語</option><option value="한국어">한국어</option><option value="中文">中文</option><option value="custom">Інша мова…</option></select>
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="Змінити тему">🌙</button>
+      <button id="banks-button" class="logout-btn" type="button">Картки</button>
+      <button id="reports-button" class="logout-btn" type="button">Звіти</button>
+      <button id="crypto-button" class="logout-btn" type="button">Крипто</button>
+      <button id="tax-button" class="logout-btn" type="button">Податки</button>
+      <button id="install-app" class="logout-btn hidden" type="button">Встановити</button>
+      <button id="limits-button" class="logout-btn" type="button">Ліміти</button>
+      <button id="logout-button" class="logout-btn" type="button">Вийти</button>
+    </div>
+  </header>
+
+  <section class="workspace-toolbar shell" aria-label="Вибір бізнесу або побутового профілю">
+    <div><span id="workspace-kind-icon">🏠</span><span><small id="workspace-kind-label">Побутові профілі</small><b id="workspace-current-label">Усі разом</b></span></div>
+    <select id="workspace-select" aria-label="Фінансовий профіль"><option value="">Усі разом</option></select>
+    <button id="manage-workspaces" class="secondary-btn" type="button">Керувати профілями</button>
+  </section>
+  <section id="monthly-report-banner" class="monthly-report-banner shell hidden">
+    <span class="monthly-report-icon">📊</span>
+    <span><b id="monthly-report-banner-title">Місячний звіт готовий</b><small id="monthly-report-banner-copy">Переглянь підсумки попереднього місяця або завантаж звіт.</small></span>
+    <button id="open-latest-report" class="primary-btn" type="button">Переглянути звіт</button>
+    <button id="dismiss-report-banner" class="icon-btn" type="button" aria-label="Закрити">×</button>
+  </section>
+
+  <main id="top" class="shell">
+    <section class="hero">
+      <div><p id="workspace-label" class="eyebrow">Побутові фінанси</p><h1>Привіт! Куди рухаються твої гроші?</h1><p>Записуй витрати, збирай на мрії та дивись на свій прогрес.</p></div>
+      <div class="hero-coin" aria-hidden="true">₴<span>✦</span></div>
+      <div class="pig-walker" aria-hidden="true"><div class="pig-walk-sprite"></div></div>
+    </section>
+
+    <section class="summary-grid" aria-label="Загальні суми">
+      <article id="balance-card" class="summary-card balance"><div class="summary-icon">👛</div><div><span>Поточний баланс</span><strong id="balance">0 ₴</strong><small>Доступно зараз</small></div><div id="deposit-pig" class="deposit-pig" aria-hidden="true"></div><div id="expense-pig" class="expense-pig" aria-hidden="true"></div><div id="coin-sparkles" class="coin-sparkles" aria-hidden="true"></div></article>
+      <article class="summary-card income"><div class="summary-icon">↗</div><div><span>Усі доходи</span><strong id="total-income">0 ₴</strong><small>Твої надходження</small></div></article>
+      <article class="summary-card expense"><div class="summary-icon">↘</div><div><span>Усі витрати</span><strong id="total-expense">0 ₴</strong><small>Твої покупки</small></div></article>
+    </section>
+
+    <section id="smart-advice" class="smart-advice hidden" aria-live="polite">
+      <div class="smart-advice-icon">✨</div>
+      <div><strong id="smart-advice-title">Розумна підказка</strong><p id="smart-advice-text"></p></div>
+      <button id="smart-plan-button" class="secondary-btn" type="button">Додати план</button>
+      <button id="smart-advice-close" class="smart-close" type="button" aria-label="Закрити підказку">×</button>
+    </section>
+
+    <section id="operations" class="section-anchor two-column">
+      <article class="panel sticky-panel">
+        <div class="panel-title"><span class="title-icon purple">＋</span><div><h2 id="transaction-form-title">Нова операція</h2><p>Запиши дохід або витрату</p></div></div>
+        <form id="transaction-form" novalidate>
+          <input id="transaction-id" type="hidden">
+          <fieldset class="type-switch"><legend>Тип операції</legend><label><input type="radio" name="type" value="income" checked><span>↗ Дохід</span></label><label><input type="radio" name="type" value="expense"><span>↘ Витрата</span></label></fieldset>
+          <label>Сума, ₴<input id="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></label>
+          <label>Категорія<select id="category" required></select></label>
+          <label id="custom-category-label" class="hidden">Своя категорія<input id="custom-category" type="text" maxlength="50" placeholder="Наприклад, Спорт"></label>
+          <label>Опис<input id="description" type="text" maxlength="160" placeholder="Наприклад, квиток у кіно" required></label>
+          <label>Дата<input id="transaction-date" type="date" required></label>
+          <label class="receipt-field">Фото чека<input id="receipt-file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><span>JPG, PNG або WebP · до 2 МБ</span></label>
+          <div id="receipt-preview-wrap" class="receipt-preview-wrap hidden"><img id="receipt-preview" alt="Попередній перегляд чека"><div><span id="receipt-ocr-status"></span><button id="remove-receipt" type="button">× Прибрати</button></div></div>
+          <p id="transaction-error" class="form-error"></p>
+          <div class="form-actions"><button class="primary-btn" type="submit">Додати операцію</button><button id="cancel-transaction" class="secondary-btn hidden" type="button">Скасувати</button></div>
+        </form>
+      </article>
+
+      <article class="panel history-panel">
+        <div class="panel-title title-row"><div><h2>Історія операцій</h2><p><span id="visible-count">0</span> записів · потягни рядок → редагувати, ← видалити</p></div><span class="title-icon mint">↕</span></div>
+        <div class="filters">
+          <div class="filter-tabs"><button class="active" data-filter="all">Усі</button><button data-filter="income">Доходи</button><button data-filter="expense">Витрати</button></div>
+          <div class="filter-grid"><label class="search-field">⌕<input id="search" type="search" placeholder="Пошук за описом"></label><select id="category-filter"><option value="">Усі категорії</option></select><select id="sort"><option value="desc">Спочатку нові</option><option value="asc">Спочатку старі</option></select><button id="clear-filters" class="secondary-btn" type="button">Очистити</button></div>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>Операція</th><th>Категорія</th><th>Дата</th><th>Сума</th><th></th></tr></thead><tbody id="transactions-list"></tbody></table></div>
+        <div id="transactions-empty" class="empty hidden">🔎<b>Нічого не знайдено</b><span>Спробуй змінити фільтри</span></div>
+      </article>
+    </section>
+
+    <section id="goals" class="section-anchor section-block">
+      <div class="section-heading"><div><p class="eyebrow">Мрії стають планами</p><h2>Фінансові цілі</h2></div><button id="show-goal-form" class="primary-btn" type="button">＋ Нова ціль</button></div>
+      <form id="goal-form" class="panel goal-form hidden" novalidate><input id="goal-id" type="hidden"><label>Назва<input id="goal-title" maxlength="100" placeholder="На що збираєш?" required></label><label>Потрібно, ₴<input id="target-amount" type="number" min="0.01" step="0.01" required></label><label>Вже є, ₴<input id="saved-amount" type="number" min="0" step="0.01" value="0" required></label><label>Дата цілі<input id="deadline" type="date" required></label><div class="form-actions"><button class="primary-btn" type="submit">Зберегти</button><button id="cancel-goal" class="secondary-btn" type="button">Скасувати</button></div><p id="goal-error" class="form-error"></p></form>
+      <div id="goals-list" class="goals-grid"></div>
+      <div id="goals-empty" class="empty panel hidden">🎯<b>Ще немає цілей</b><span>Створи першу та почни збирати</span></div>
+    </section>
+
+    <section id="statistics" class="section-anchor section-block">
+      <div class="section-heading"><div><p class="eyebrow">Усе як на долоні</p><h2>Статистика</h2></div></div>
+      <div class="stats-highlights"><article class="mini-card"><span>Найбільше витрат</span><strong id="top-category">—</strong></article><article class="mini-card"><span>Усього операцій</span><strong id="transaction-count">0</strong></article></div>
+      <div class="charts-grid"><article class="panel chart-card"><h3>Витрати за категоріями</h3><div class="chart-box"><canvas id="expense-chart"></canvas></div></article><article class="panel chart-card wide"><h3>Доходи та витрати за місяцями</h3><div class="chart-box"><canvas id="monthly-chart"></canvas></div></article></div>
+    </section>
+  </main>
+
+  <div id="reports-modal" class="feature-modal hidden" role="dialog" aria-modal="true" aria-labelledby="reports-title">
+    <section class="feature-card reports-card">
+      <button class="modal-close" data-close="reports-modal" type="button">×</button>
+      <p class="eyebrow">Щомісячна фінансова картина</p>
+      <h2 id="reports-title">Звіти та історична статистика</h2>
+      <p class="modal-copy">Обери будь-який місяць. Дані можна переглянути разом, окремо за побутом, бізнесом або профілем.</p>
+      <form id="report-filter-form" class="report-filters">
+        <label>Місяць<input id="report-month" type="month" min="2000-01" required></label>
+        <label>Розділ<select id="report-scope"><option value="all">Усе разом</option><option value="personal">🏠 Побут</option><option value="business">💼 Бізнес</option></select></label>
+        <label>Профіль<select id="report-workspace"><option value="">Усі профілі</option></select></label>
+        <button class="primary-btn" type="submit">Показати</button>
+      </form>
+      <div class="report-actions"><button id="download-report-csv" class="secondary-btn" type="button">⬇ Завантажити CSV</button><span>CSV відкривається в Excel, Google Sheets та інших таблицях.</span></div>
+      <div id="report-content" class="report-content"><div class="bank-empty">📅<strong>Обери місяць</strong><span>Тут з’явиться повний фінансовий звіт.</span></div></div>
+    </section>
+  </div>
+
+  <div id="workspaces-modal" class="feature-modal hidden" role="dialog" aria-modal="true" aria-labelledby="workspaces-title">
+    <section class="feature-card workspaces-card">
+      <button class="modal-close" data-close="workspaces-modal" type="button">×</button>
+      <p class="eyebrow">Кілька напрямів · одна статистика</p>
+      <h2 id="workspaces-title">Мої фінансові профілі</h2>
+      <p id="workspaces-copy" class="modal-copy">Створи окремі побутові профілі або бізнеси. У режимі «Усі разом» статистика підсумовується.</p>
+      <form id="workspace-form" class="workspace-create-form">
+        <label>Назва<input id="workspace-name" type="text" maxlength="60" placeholder="Наприклад, Магазин або Родина" required></label>
+        <button class="primary-btn" type="submit">＋ Створити</button>
+      </form>
+      <div id="workspaces-list" class="workspaces-list"></div>
+    </section>
+  </div>
+
+  <div id="limits-modal" class="feature-modal hidden" role="dialog" aria-modal="true" aria-labelledby="limits-title">
+    <section class="feature-card"><button class="modal-close" data-close="limits-modal" type="button">×</button><p class="eyebrow">Контроль бюджету</p><h2 id="limits-title">Місячні ліміти</h2><p class="modal-copy">Встанови максимальну суму витрат для категорії.</p><form id="limit-form"><label>Категорія<select id="limit-category"></select></label><label>Ліміт, ₴<input id="limit-amount" type="number" min="1" step="1" required></label><button class="primary-btn" type="submit">Зберегти ліміт</button></form><div id="limits-list" class="limits-list"></div></section>
+  </div>
+  <div id="banks-modal" class="feature-modal hidden" role="dialog" aria-modal="true" aria-labelledby="banks-title">
+    <section class="feature-card banks-card">
+      <button class="modal-close" data-close="banks-modal" type="button">×</button>
+      <p class="eyebrow">Безпечна синхронізація</p>
+      <h2 id="banks-title">Банки та картки</h2>
+      <div id="bank-vault-banner" class="bank-vault-banner" aria-live="polite">
+        <span class="bank-vault-icon">🛡️</span>
+        <span><b>Банківський сейф захищено</b><small>Токени зашифровані Windows. PIN потрібен лише для підключення або видалення банку.</small></span>
+        <span id="bank-vault-status" class="connection-badge">Заблоковано</span>
+        <button id="bank-vault-lock" class="text-action hidden" type="button">Заблокувати</button>
+      </div>
+      <p class="modal-copy">Обери свій банк. Номер картки, CVV, PIN, логін і пароль програмі не потрібні.</p>
+      <h3 class="bank-choice-title">Оберіть банк для підключення</h3>
+      <div id="bank-provider-picker" class="bank-provider-picker" role="list" aria-label="Доступні банки">
+        <button data-bank-provider="Monobank" class="bank-provider-option" type="button"><span class="provider-logo mono">M</span><b>Monobank</b><small>Автосинхронізація</small></button>
+        <button data-bank-provider="ПриватБанк" class="bank-provider-option active" type="button"><span class="provider-logo privat">П</span><b>ПриватБанк</b><small>Імпорт операцій</small></button>
+        <button data-bank-provider="ПУМБ" class="bank-provider-option" type="button"><span class="provider-logo pumb">П</span><b>ПУМБ</b><small>Імпорт операцій</small></button>
+        <button data-bank-provider="Ощадбанк" class="bank-provider-option" type="button"><span class="provider-logo oschad">О</span><b>Ощадбанк</b><small>Імпорт операцій</small></button>
+        <button data-bank-provider="Sense Bank" class="bank-provider-option" type="button"><span class="provider-logo sense">S</span><b>Sense Bank</b><small>Імпорт операцій</small></button>
+        <button data-bank-provider="Raiffeisen Bank" class="bank-provider-option" type="button"><span class="provider-logo raiff">R</span><b>Raiffeisen</b><small>Імпорт операцій</small></button>
+        <button data-bank-provider="Інший банк" class="bank-provider-option" type="button"><span class="provider-logo other">＋</span><b>Інший банк</b><small>Ще 6+ банків</small></button>
+      </div>
+      <section id="monobank-provider-panel" class="provider-panel hidden">
+        <div class="provider-heading"><span><b>Monobank</b><small>Автоматична синхронізація через персональний API-токен</small></span><span class="connection-badge auto">Автоматично</span></div>
+        <form id="monobank-form" class="bank-connect-form">
+          <label>Персональний токен Monobank<input id="monobank-token" type="password" minlength="20" maxlength="300" autocomplete="off" placeholder="Встав токен з api.monobank.ua" required></label>
+          <div class="form-actions"><button class="primary-btn" type="submit">Підключити Monobank</button><a class="secondary-btn bank-token-link" href="https://api.monobank.ua/" target="_blank" rel="noopener">Отримати токен</a></div>
+        </form>
+        <p class="bank-security">🔒 Токен шифрується Windows і залишається лише на цьому комп’ютері.</p>
+      </section>
+      <section id="privat-business-provider-panel" class="provider-panel">
+        <div class="provider-heading"><span><b>Приват24 для бізнесу</b><small>Справжнє підключення рахунків, балансів та операцій через офіційний API</small></span><span class="connection-badge auto">Автоматично</span></div>
+        <form id="privat-business-form" class="bank-connect-form">
+          <label>API-токен Приват24 для бізнесу<input id="privat-business-token" type="password" minlength="20" maxlength="500" autocomplete="off" placeholder="Встав токен з Інтеграція → API" required></label>
+          <label>Простір<select id="privat-business-scope"><option value="business">💼 Бізнес</option><option value="personal">🏠 Побут</option></select></label>
+          <div class="form-actions"><button class="primary-btn" type="submit">Підключити рахунки ПриватБанку</button><a class="secondary-btn bank-token-link" href="https://privatbank.ua/business/intehratsiya" target="_blank" rel="noopener">Як отримати токен</a></div>
+        </form>
+        <p class="bank-security">🔒 У Приват24 увімкни для токена лише «Отримання балансів і транзакцій». Токен шифрується Windows; платежі з Pocket Money не виконуються.</p>
+        <button id="show-privat-import" class="text-action" type="button">Немає бізнес-токена? Імпортувати файл</button>
+      </section>
+      <section id="statement-provider-panel" class="provider-panel hidden">
+        <div class="provider-heading"><span><b id="statement-provider-title">ПриватБанк</b><small>Додати картку та імпортувати всі операції з файлу банку</small></span><span class="connection-badge">Файл банку</span></div>
+        <form id="statement-import-form" class="bank-connect-form">
+          <div class="bank-import-grid">
+            <label id="statement-bank-label">Банк<select id="statement-bank"><option>ПриватБанк</option><option>ПУМБ</option><option>Ощадбанк</option><option>Sense Bank</option><option>Raiffeisen Bank</option><option>OTP Bank</option><option>UKRSIBBANK</option><option>А-Банк</option><option>Кредобанк</option><option>Укргазбанк</option><option value="Інший банк">Інший банк</option></select></label>
+            <label>Назва картки або рахунку<input id="statement-account-name" maxlength="100" placeholder="Наприклад, Картка для виплат" required></label>
+            <label>Простір<select id="statement-scope"><option value="personal">🏠 Побут</option><option value="business">💼 Бізнес</option></select></label>
+          </div>
+          <label class="receipt-field">Файл операцій з банку<input id="statement-file" type="file" accept=".csv,.txt,.tsv,text/csv,text/plain" required><span>CSV, TXT або TSV · до 5 МБ</span></label>
+          <button id="statement-submit" class="primary-btn" type="submit">Імпортувати з ПриватБанку</button>
+        </form>
+        <p class="bank-security">У банківському застосунку експортуй історію операцій у CSV/TXT і вибери файл тут. Програма створить картку, додасть операції та визначить категорії. Логін, пароль, PIN і CVV не потрібні.</p>
+      </section>
+      <div class="bank-divider"><span>Підключені картки й рахунки</span></div>
+      <div id="bank-accounts" class="bank-accounts"></div>
+      <button id="disconnect-monobank" class="bank-disconnect hidden" type="button">Відключити Monobank</button>
+      <button id="disconnect-privat-business" class="bank-disconnect hidden" type="button">Відключити Приват24 для бізнесу</button>
+    </section>
+  </div>
+  <div id="tax-modal" class="feature-modal hidden" role="dialog" aria-modal="true" aria-labelledby="tax-title">
+    <section class="feature-card finance-tool-card"><button class="modal-close" data-close="tax-modal" type="button">×</button><p class="eyebrow">Бізнес · податковий резерв</p><h2 id="tax-title">Податки ФОП</h2><p class="modal-copy">Розрахунок за доходами у просторі «Бізнес». Ставки можна змінити, якщо законодавство оновиться.</p>
+      <form id="tax-form" class="tool-form"><label>Система оподаткування<select id="tax-system"><option value="group1">ФОП 1 група</option><option value="group2">ФОП 2 група</option><option value="group3_5">ФОП 3 група · 5%</option><option value="group3_3_vat">ФОП 3 група · 3% + ПДВ</option><option value="custom">Власні ставки</option></select></label><div id="custom-tax-fields" class="tool-grid hidden"><label>Єдиний податок, %<input id="tax-rate" type="number" min="0" max="100" step="0.01"></label><label>Єдиний податок/місяць, ₴<input id="tax-monthly" type="number" min="0" step="0.01"></label><label>Військовий збір, %<input id="military-rate" type="number" min="0" max="100" step="0.01"></label><label>Військовий збір/місяць, ₴<input id="military-monthly" type="number" min="0" step="0.01"></label><label>ЄСВ/місяць, ₴<input id="esv-monthly" type="number" min="0" step="0.01"></label></div><button class="primary-btn" type="submit">Зберегти налаштування</button></form>
+      <div class="tax-period"><label>Рік<input id="tax-year" type="number" min="2000" max="2100"></label><label>Квартал<select id="tax-quarter"><option value="1">I</option><option value="2">II</option><option value="3">III</option><option value="4">IV</option></select></label><button id="tax-calculate" class="secondary-btn" type="button">Розрахувати</button></div><div id="tax-summary" class="tool-summary"></div><p class="tool-notice">Це фінансовий планувальник, а не подання звітності. Остаточні нарахування перевіряй в Електронному кабінеті платника.</p>
+    </section>
+  </div>
+  <div id="crypto-modal" class="feature-modal hidden" role="dialog" aria-modal="true" aria-labelledby="crypto-title">
+    <section class="feature-card finance-tool-card"><button class="modal-close" data-close="crypto-modal" type="button">×</button><p class="eyebrow">Портфель лише для перегляду</p><h2 id="crypto-title">Криптовалюта</h2><p class="modal-copy">Підключення Binance показує баланси та орієнтовну вартість у USDT. Торгівля й виведення коштів заблоковані.</p>
+      <form id="crypto-form" class="tool-form"><label>Біржа<select id="crypto-provider"><option value="binance">Binance</option></select></label><label>API Key<input id="crypto-key" type="password" minlength="20" autocomplete="off" required></label><label>Secret Key<input id="crypto-secret" type="password" minlength="20" autocomplete="off" required></label><button class="primary-btn" type="submit">Підключити безпечно</button></form><p class="bank-security">🔒 Використовуй окремий ключ лише з правом Reading. Не вмикай Spot Trading, Futures або Withdrawals.</p><div id="crypto-portfolio" class="tool-summary"></div><div id="crypto-actions" class="form-actions hidden"><button id="crypto-sync" class="primary-btn" type="button">Синхронізувати</button><button id="crypto-disconnect" class="secondary-btn danger" type="button">Відключити</button></div>
+    </section>
+  </div>
+  <button id="assistant-button" class="assistant-button" type="button" aria-label="Відкрити розумного помічника">✨</button>
+  <div id="assistant-modal" class="feature-modal hidden" role="dialog" aria-modal="true" aria-labelledby="assistant-title">
+    <section class="feature-card assistant-card"><button class="modal-close" data-close="assistant-modal" type="button">×</button><p class="eyebrow">OpenRouter · виконує команди</p><h2 id="assistant-title">Розумний помічник</h2><div id="assistant-chat" class="assistant-chat"><div class="assistant-message">Привіт! Напиши: «Додай витрату 50 грн на солодощі» — і я зроблю це.</div></div><div class="assistant-suggestions"><button type="button">На що я витрачаю найбільше?</button><button type="button">Додай витрату 50 грн на солодощі</button><button type="button">Який мій баланс?</button></div><form id="assistant-form"><input id="assistant-input" placeholder="Напиши запит або команду…" autocomplete="off"><button class="primary-btn" type="submit">Надіслати</button></form></section>
+  </div>
+  <div id="receipt-modal" class="feature-modal hidden" role="dialog" aria-modal="true"><section class="feature-card receipt-card"><button class="modal-close" data-close="receipt-modal" type="button">×</button><h2>Фото чека</h2><img id="receipt-full" alt="Фото чека"></section></div>
+
+  <nav class="mobile-nav" aria-label="Мобільна навігація"><a href="#top">⌂<span>Головна</span></a><a href="#operations">↕<span>Операції</span></a><a href="#goals">◎<span>Цілі</span></a><a href="#statistics">▥<span>Статистика</span></a></nav>
+  <footer><div class="shell">Pocket Money · Маленькі кроки — великі цілі ✦</div></footer>
+</body>
+</html>

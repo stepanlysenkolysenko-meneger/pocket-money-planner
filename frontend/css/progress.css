@@ -1,0 +1,20 @@
+.progress-track {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.progress-track::-webkit-progress-bar {
+  background: var(--surface-2);
+  border-radius: 99px;
+}
+
+.progress-track::-webkit-progress-value {
+  background: linear-gradient(90deg, var(--purple), #b078f3);
+  border-radius: 99px;
+}
+
+.progress-track::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--purple), #b078f3);
+  border-radius: 99px;
+}

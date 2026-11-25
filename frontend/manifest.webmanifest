@@ -1,0 +1,12 @@
+{
+  "name": "Pocket Money — планувальник грошей",
+  "short_name": "Pocket Money",
+  "description": "Особисті та бізнес-фінанси, банки, податки й криптопортфель",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f6f7fb",
+  "theme_color": "#7557ed",
+  "icons": [{"src": "/app-icon.png", "sizes": "any", "type": "image/png", "purpose": "any maskable"}]
+}

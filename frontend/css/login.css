@@ -1,0 +1,51 @@
+.login-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: radial-gradient(circle at 20% 20%, #a98cff55, transparent 35%),
+              radial-gradient(circle at 80% 80%, #7557ed44, transparent 35%),
+              var(--bg);
+}
+
+.login-card {
+  width: min(430px, 100%);
+  padding: 38px;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: 0 25px 70px rgba(61, 43, 130, .18);
+}
+
+.login-logo {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #8b68ff, #6545df);
+  color: #fff;
+  font-size: 32px;
+  font-weight: 800;
+  box-shadow: 0 12px 28px #7557ed55;
+}
+
+.login-card .eyebrow { color: var(--purple); }
+.login-card h1 { margin: 6px 0 8px; font-size: 30px; line-height: 1.15; }
+.login-copy { margin: 0 0 26px; color: var(--muted); font-size: 13px; }
+.auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 20px; padding: 5px; border-radius: 13px; background: var(--surface-2); }
+.auth-tabs button { min-height: 38px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 800; cursor: pointer; }
+.auth-tabs button.active { background: var(--surface); color: var(--purple); box-shadow: 0 4px 12px rgba(30, 25, 55, .08); }
+.login-card form label { margin-bottom: 16px; }
+.login-btn { width: 100%; min-height: 50px; }
+.login-card > small { display: block; margin-top: 18px; color: var(--muted); text-align: center; font-size: 10px; }
+.logout-btn { border: 0; background: transparent; color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; }
+.logout-btn:hover { color: var(--red); }
+
+@media (max-width: 560px) {
+  .login-card { padding: 28px 22px; border-radius: 22px; }
+  .login-card h1 { font-size: 25px; }
+}
