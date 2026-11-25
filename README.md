@@ -1,78 +1,165 @@
 # Pocket Money — планувальник кишенькових грошей
 
-Навчальний локальний full-stack застосунок українською мовою для обліку доходів і витрат, накопичення на фінансові цілі та перегляду простої статистики. Дані зберігаються в SQLite, суми — у точному десятковому форматі.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?logo=sqlite&logoColor=white)](https://sqlite.org)
+[![Chart.js](https://img.shields.io/badge/Chart.js-4-FF6384?logo=chart.js&logoColor=white)](https://chartjs.org)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey?logo=windows&logoColor=white)](https://microsoft.com/windows)
 
-## Швидкий повторний запуск у Windows
+> Навчальний локальний **full-stack** застосунок українською мовою для обліку доходів і витрат, накопичення на фінансові цілі та перегляду статистики. Дані зберігаються в SQLite, суми — у точному десятковому форматі.
 
-Після першого встановлення залежностей двічі натисніть `INSTALL_POCKET_MONEY.cmd`. На робочому столі з'явиться ярлик Pocket Money із власною іконкою. Надалі запускайте застосунок цим ярликом: воно відкриється у власному настільному вікні без браузера та командного рядка. Застосунок автоматично обирає вільний локальний порт і не потребує інтернету.
+---
 
-Під час першого входу введіть ім'я та придумайте PIN-код із чотирьох цифр. Профіль зберігається локально лише на цьому комп'ютері.
-Після закриття й повторного запуску Pocket Money потрібно увійти знову за PIN-кодом.
+## 🖥️ Демонстрація
 
-## Можливості
+| Головний екран | Статистика | Фінансові цілі |
+|:---:|:---:|:---:|
+| ![Головний](frontend/assets/images/pig-walk.png) | ![Статистика](frontend/assets/images/pig-deposit.png) | ![Цілі](frontend/assets/images/pig-expense.png) |
 
-- додавання, редагування, видалення та фільтрація операцій;
-- автоматичний розрахунок балансу, доходів і витрат;
-- фінансові цілі з прогресом і поповненням;
-- кругова та стовпчикова діаграми;
-- світла й темна теми;
-- адаптивний інтерфейс для екранів від 320 px.
+> *Додайте власні скріншоти програми у `frontend/assets/images/` для кращого вигляду.*
 
-## Структура
+---
 
-```text
-pocket-money-planner/
-├── frontend/
-│   ├── index.html
-│   ├── css/{style.css,responsive.css,progress.css}
-│   ├── js/{app.js,api.js,transactions.js,goals.js,statistics.js}
-│   └── assets/{images,icons}/
-├── backend/
-│   ├── main.py
-│   ├── database.py
-│   ├── models.py
-│   ├── schemas.py
-│   ├── crud.py
-│   └── requirements.txt
-├── .gitignore
-└── README.md
-```
+## ✨ Можливості
 
-## Необхідні програми
+- ➕ **Операції** — додавання, редагування, видалення, фільтрація за категоріями/датами
+- 💰 **Баланс** — автоматичний розрахунок доходів, витрат та поточного балансу
+- 🎯 **Фінансові цілі** — створення цілей, відстеження прогресу, поповнення
+- 📊 **Статистика** — інтерактивні кругові та стовпчикові діаграми (Chart.js)
+- 🌓 **Теми** — світла та темна тема з автоматичним запам'ятовуванням
+- 📱 **Адаптивність** — працює на екранах від 320px (мобільні/планшети/десктоп)
+- 🔒 **Локальність** — всі дані лише на вашому комп'ютері, жодного інтернету
+- 🔐 **PIN-авторизація** — 4-значний PIN для захисту профілю
 
-- Python 3.10 або новіший;
-- сучасний браузер;
-- доступ до інтернету для шрифту та Chart.js із CDN.
+---
 
-## Запуск backend
+## 🚀 Швидкий старт (Windows)
 
-Відкрийте термінал у корені проєкту:
+### Варіант 1: Автоматичний (рекомендований)
+1. Скачайте репозиторій: **Code → Download ZIP** → розпакуйте
+2. Подвійний клік на `INSTALL_POCKET_MONEY.cmd`
+3. На робочому столі з'явиться ярлик **Pocket Money** з власною іконкою
+4. Запускайте завжди цим ярликом — відкривається у власному вікні без консолі
 
+### Варіант 2: Ручний через термінал
 ```powershell
+# 1. Клонування
+git clone https://github.com/stepanlysenkolysenko-meneger/pocket-money-planner.git
+cd pocket-money-planner
+
+# 2. Backend
 cd backend
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn main:app --reload
+
+# 3. Відкрийте http://127.0.0.1:8000
 ```
 
-Інтерфейс працюватиме за адресою `http://127.0.0.1:8000`, API — `http://127.0.0.1:8000/api`, Swagger — `http://127.0.0.1:8000/docs`. SQLite-файл створюється автоматично. Демодані додаються тільки тоді, коли відповідні таблиці порожні.
+---
 
-## Окремий запуск frontend (необов'язково)
+## 🛠️ Технології
 
-FastAPI вже віддає інтерфейс на порту 8000. Для окремого frontend-сервера можна відкрити другий термінал:
+| Стек | Використання |
+|------|-------------|
+| **Python 3.10+** | Основна мова |
+| **FastAPI** | Backend API, автоматична документація (Swagger) |
+| **SQLAlchemy** | ORM для роботи з БД |
+| **SQLite** | Локальна база даних (файл `pocket_money.db`) |
+| **Pydantic** | Валідація даних та серіалізація |
+| **Vanilla JS (ES6+)** | Frontend без фреймворків |
+| **Chart.js** | Графіки та діаграми |
+| **CSS Variables** | Теми, адаптивність, анімації |
 
-```powershell
-cd frontend
-python -m http.server 5500
+---
+
+## 📁 Структура проєкту
+
+```text
+pocket-money-planner/
+├── frontend/                 # Клієнтська частина
+│   ├── index.html            # Головна сторінка (SPA)
+│   ├── css/                  # Стилі (теми, адаптивність, анімації)
+│   ├── js/                   # Модульна JS архітектура
+│   │   ├── app.js            # Головний контролер
+│   │   ├── api.js            # Робота з API
+│   │   ├── transactions.js   # Операції
+│   │   ├── goals.js          # Цілі
+│   │   ├── statistics.js     # Графіки
+│   │   └── ...
+│   └── assets/               # Іконки, зображення, шрифти
+├── backend/                  # Серверна частина
+│   ├── main.py               # Точка входу FastAPI
+│   ├── database.py           # Налаштування БД
+│   ├── models.py             # SQLAlchemy моделі
+│   ├── schemas.py            # Pydantic схеми
+│   ├── crud.py               # CRUD операції
+│   ├── ai_service.py         # (опційно) AI функції
+│   └── requirements.txt      # Залежності Python
+├── .gitignore
+├── LICENSE
+├── README.md
+├── INSTALL_POCKET_MONEY.cmd  # Windows інсталятор
+├── install_shortcut.ps1      # Створення ярлика
+├── start_app.py              # Запуск з системного трею
+└── PocketMoney.spec          # PyInstaller конфіг
 ```
 
-Відкрийте `http://127.0.0.1:5500`. Backend має залишатися запущеним.
+---
 
-## Можливі проблеми
+## ⚙️ Конфігурація
 
-- **Не завантажуються дані:** перевірте, що Uvicorn працює на порту 8000, а frontend відкрито через порт 5500.
-- **Команда `python` не знайдена:** встановіть Python і ввімкніть опцію додавання до PATH.
-- **Не активується середовище у PowerShell:** виконайте `Set-ExecutionPolicy -Scope Process Bypass`, тоді повторіть активацію.
-- **Не видно графіків:** перевірте інтернет-з'єднання, адже Chart.js підключається через CDN.
-- **Порт зайнятий:** запустіть сервер на іншому порту та відповідно змініть `API_URL` у `frontend/js/api.js` або CORS у `backend/main.py`.
+### Змінні середовища (`.env`)
+```env
+# Опціонально — для продакшену
+SECRET_KEY=your-secret-key-here
+DATABASE_URL=sqlite:///./pocket_money.db
+CORS_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+```
+
+### Порт
+За замовчуванням: **8000**. Змінити у `backend/main.py`:
+```python
+import os
+port = int(os.environ.get("PORT", 8000))
+uvicorn.run(app, host="0.0.0.0", port=port)
+```
+
+---
+
+## 🌐 Деплой (розгортання)
+
+Це **повноцінний веб-додаток** (не статичний сайт), тому **GitHub Pages не підійде**.
+
+### Безкоштовні варіанти:
+
+| Платформа | Безкоштовний ліміт | Складність |
+|-----------|-------------------|------------|
+| **Render** | 750 год/міс | ⭐ Найпростіший |
+| **Railway** | $5 кредитів/міс | ⭐ Дуже просто |
+| **Fly.io** | Безкоштовні ресурси | ⭐⭐ |
+
+### Render (рекомендовано):
+1. Зареєструйтесь на [render.com](https://render.com) через GitHub
+2. **New + → Web Service** → виберіть цей репозиторій
+3. Build: `pip install -r backend/requirements.txt`
+4. Start: `cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
+5. **Deploy** → через 2-3 хвилини отримайте URL: `https://your-app.onrender.com`
+
+---
+
+## 📝 Ліцензія
+
+MIT License — вільне використання, модифікація, розповсюдження.
+
+---
+
+## 👤 Автор
+
+**stepanlysenkolysenko-meneger** — [GitHub](https://github.com/stepanlysenkolysenko-meneger)
+
+---
+
+⭐ **Якщо проєкт корисний — поставіть зірочку на GitHub!**
